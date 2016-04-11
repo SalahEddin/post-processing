@@ -1,0 +1,478 @@
+<?xml version="1.0"?>
+<!-- Level Setup -->
+<Level>
+
+  <!-- Entity Templates -->
+  <Templates>
+
+    <!-- Environment Types -->
+    <EntityTemplate Type="Generic" Name="Stars" Mesh="Stars.x"/>
+    <EntityTemplate Type="Generic" Name="Floor" Mesh="Floor.x"/>
+    <EntityTemplate Type="Generic" Name="Atmosphere" Mesh="Atmosphere.x"/>
+    <EntityTemplate Type="Planet" Name="Earth" Mesh="Earth.x"/>
+    <EntityTemplate Type="Planet" Name="Clouds" Mesh="Clouds.x"/>
+    <EntityTemplate Type="Planet" Name="Planet" Mesh="Planet.x"/>
+
+    <!-- Scenery Types -->
+    <EntityTemplate Type="Scenery" Name="Lamp" Mesh="Lamp.x"/>
+    <EntityTemplate Type="Scenery" Name="LargeGarage" Mesh="GarageLarge.x"/>
+    <EntityTemplate Type="Scenery" Name="LargeTank" Mesh="TankLarge1.x"/>
+    <EntityTemplate Type="Scenery" Name="SmallTank" Mesh="TankSmall1.x"/>
+    <EntityTemplate Type="Scenery" Name="Tribune" Mesh="Tribune1.x"/>
+    <EntityTemplate Type="Scenery" Name="Tree" Mesh="Tree.x"/>
+
+    <EntityTemplate Type="Scenery" Name="Wall" Mesh="Wall1.x"/>
+    <EntityTemplate Type="Scenery" Name="Wall2" Mesh="Wall2.x"/>
+    
+    <!-- Other Types -->
+    <EntityTemplate Type="Object" Name="ParaCube" Mesh="Cube.x"/>
+    <EntityTemplate Type="Object" Name="BigShip" Mesh="Interstellar.x"/>
+    <EntityTemplate Type="Object" Name="Block" Mesh="Block.x"/>
+
+  </Templates>
+  <!-- End of Entity Types -->
+
+  
+  <!-- Scene Setup -->
+  <Entities>
+
+    <!-- Environment Positions -->
+    <Entity Type="Stars" Name="Stars">
+      <Position X="0.0" Y="0.0" Z="0.0"/>
+      <Rotation X="30.0" Y="30.0" Z="10.0"/>
+      <Scale X="100000.0" Y="100000.0" Z="100000.0"/>
+    </Entity>
+    <Entity Type="Planet" Name="Moon">
+      <Position X="4000.0" Y="2000.0" Z="4000.0"/>
+      <Rotation X="0.0" Y="0.0" Z="10.0"/>
+      <Scale X="1000.0" Y="1000.0" Z="1000.0"/>
+      <Spin Speed="-0.03"/>
+    </Entity>
+    <Entity Type="Floor" Name="Floor">
+      <Position X="0.0" Y="-0.4" Z="0.0"/>
+      <Scale X="20.0" Y="20.0" Z="20.0"/>
+    </Entity>
+
+    <!-- Object Positions -->
+    <Entity Type="ParaCube" Name="Cubey">
+      <Position X="170.0" Y="30.0" Z="50.0"/>
+    </Entity>
+    <Entity Type="BigShip" Name="UFO">
+      <Position X="0.0" Y="1200.0" Z="0.0">
+        <Randomise X="2000.0" Y="0.0" Z="2000.0"/>
+      </Position>
+      <Scale X="40.0" Y="40.0" Z="40.0"/>
+    </Entity>
+    <Entity Type="Block" Name="PostProcessBlock">
+      <Position X="0.0" Y="42.0" Z="-80.0"/>
+      <Scale X="0.3" Y="0.4" Z="0.2"/>
+    </Entity>
+
+    <!-- Scenery Positions -->
+    <!-- TODO CHANGE NAMES!-->
+    <Entity Type="Wall" Name="Wall-ey">
+      <Position X="0" Y="40" Z="-80"/>
+      <Scale X="10.0" Y="10.0" Z="10.0"/>
+    </Entity>
+    <Entity Type="Wall2" Name="Wall-is">
+      <Position X="0" Y="50" Z="-80"/>
+      <Scale X="10.0" Y="10.0" Z="10.0"/>
+    </Entity>
+    
+    <Entity Type="Lamp" Name="-">
+      <Position X="0" Y="0" Z="15"/>
+      <Rotation Radians="true" X="0" Y="-3.14159" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="0" Y="0" Z="-15"/>
+      <Rotation Radians="true" X="0" Y="0" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="-32.7637949" Y="0" Z="3.974877011"/>
+      <Rotation Radians="true" X="0" Y="-3.403389167" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="-25" Y="0" Z="-25"/>
+      <Rotation Radians="true" X="0" Y="-0.2617991667" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="-69.99700015" Y="0" Z="-9.024433779"/>
+      <Rotation Radians="true" X="0" Y="2.617991667" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="-55" Y="0" Z="-35"/>
+      <Rotation Radians="true" X="0" Y="-0.5235983333" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="-95.97296866" Y="0" Z="-40.00449955"/>
+      <Rotation Radians="true" X="0" Y="2.094393333" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="-70" Y="0" Z="-55"/>
+      <Rotation Radians="true" X="0" Y="-1.047196667" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="-103.9661854" Y="0" Z="-72.23853401"/>
+      <Rotation Radians="true" X="0" Y="1.832594167" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="-75" Y="0" Z="-80"/>
+      <Rotation Radians="true" X="0" Y="-1.308995833" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="22.06583424" Y="0" Z="20.26897224"/>
+      <Rotation Radians="true" X="0" Y="-3.403389167" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="29.82962913" Y="0" Z="-8.705904774"/>
+      <Rotation Radians="true" X="0" Y="-0.2617991667" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="50.47015992" Y="0" Z="33.15845504"/>
+      <Rotation Radians="true" X="0" Y="-3.665188333" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="65.46716007" Y="0" Z="7.182888823"/>
+      <Rotation Radians="true" X="0" Y="-0.5235983333" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="74.57120909" Y="0" Z="52.96079675"/>
+      <Rotation Radians="true" X="0" Y="2.3561925" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="95.7780492" Y="0" Z="31.75395663"/>
+      <Rotation Radians="true" X="0" Y="-0.7853975" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="99.32206712" Y="0" Z="77.7074134"/>
+      <Rotation Radians="true" X="0" Y="2.3561925" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="120.5267865" Y="0" Z="56.50269398"/>
+      <Rotation Radians="true" X="0" Y="-0.7853975" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="121.8077496" Y="0" Z="100.5740598"/>
+      <Rotation Radians="true" X="0" Y="2.094393333" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="147.7755239" Y="0" Z="85.58155834"/>
+      <Rotation Radians="true" X="0" Y="-1.047196667" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="132.0238455" Y="0" Z="124.3713417"/>
+      <Rotation Radians="true" X="0" Y="1.570795" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="162.00585" Y="0" Z="124.3713417"/>
+      <Rotation Radians="true" X="0" Y="-1.570795" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="124.2131419" Y="0" Z="149.8722196"/>
+      <Rotation Radians="true" X="0" Y="1.047196667" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="150.1757229" Y="0" Z="164.8617228"/>
+      <Rotation Radians="true" X="0" Y="-2.094393333" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="108.4891031" Y="0" Z="172.8161191"/>
+      <Rotation Radians="true" X="0" Y="0.7853975" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="129.6853419" Y="0" Z="194.0123579"/>
+      <Rotation Radians="true" X="0" Y="-2.3561925" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="-139.5041387" Y="0" Z="49.27231858"/>
+      <Rotation Radians="true" X="0" Y="-3.403389167" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="-131.7442249" Y="0" Z="20.31192611"/>
+      <Rotation Radians="true" X="0" Y="-0.2617991667" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="-115.4517046" Y="0" Z="58.87644357"/>
+      <Rotation Radians="true" X="0" Y="2.3561925" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="-94.25334596" Y="0" Z="37.67808492"/>
+      <Rotation Radians="true" X="0" Y="-0.7853975" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="-102.9420867" Y="0" Z="82.43263285"/>
+      <Rotation Radians="true" X="0" Y="1.832594167" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="-73.98748598" Y="0" Z="74.67427098"/>
+      <Rotation Radians="true" X="0" Y="-1.308995833" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="-107.4220686" Y="0" Z="112.6247858"/>
+      <Rotation Radians="true" X="0" Y="1.308995833" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="-78.47036334" Y="0" Z="120.3823718"/>
+      <Rotation Radians="true" X="0" Y="-1.832594167" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="-92.57503598" Y="0" Z="157.37599"/>
+      <Rotation Radians="true" X="0" Y="-1.832594167" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="-121.5296367" Y="0" Z="149.6176282"/>
+      <Rotation Radians="true" X="0" Y="1.308995833" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="-97.05501759" Y="0" Z="187.5665912"/>
+      <Rotation Radians="true" X="0" Y="-1.308995833" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="-126.012514" Y="0" Z="195.325729"/>
+      <Rotation Radians="true" X="0" Y="1.832594167" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="-84.54617534" Y="0" Z="211.1214364"/>
+      <Rotation Radians="true" X="0" Y="-0.7853975" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="-105.746654" Y="0" Z="232.3219151"/>
+      <Rotation Radians="true" X="0" Y="-3.9269875" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="-60.49508525" Y="0" Z="220.7247851"/>
+      <Rotation Radians="true" X="0" Y="-0.2617991667" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="-68.25577509" Y="0" Z="249.6880739"/>
+      <Rotation Radians="true" X="0" Y="-3.403389167" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="-28.42614596" Y="0" Z="220.9941673"/>
+      <Rotation Radians="true" X="0" Y="0" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="-28.42614596" Y="0" Z="250.9821691"/>
+      <Rotation Radians="true" X="0" Y="3.14159" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="6.573854039" Y="0" Z="220.9911682"/>
+      <Rotation Radians="true" X="0" Y="0" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="6.573854039" Y="0" Z="250.9821691"/>
+      <Rotation Radians="true" X="0" Y="3.14159" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="37.61823944" Y="0" Z="217.951523"/>
+      <Rotation Radians="true" X="0" Y="0.2617991667" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="45.38125796" Y="0" Z="246.9235025"/>
+      <Rotation Radians="true" X="0" Y="3.403389167" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="66.81737145" Y="0" Z="206.9808724"/>
+      <Rotation Radians="true" X="0" Y="0.5235983333" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="81.81587145" Y="0" Z="232.9590364"/>
+      <Rotation Radians="true" X="0" Y="3.665188333" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="86.14599847" Y="0" Z="195.1036974"/>
+      <Rotation Radians="true" X="0" Y="0.7853975" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="107.3592019" Y="0" Z="216.3169008"/>
+      <Rotation Radians="true" X="0" Y="-2.3561925" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="-200.9971164" Y="0" Z="-52.00340298"/>
+      <Rotation Radians="true" X="0" Y="-1.832594167" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="-229.9488217" Y="0" Z="-59.76098902"/>
+      <Rotation Radians="true" X="0" Y="1.308995833" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="-205.4770983" Y="0" Z="-21.81125002"/>
+      <Rotation Radians="true" X="0" Y="-1.308995833" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="-234.431699" Y="0" Z="-14.05288815"/>
+      <Rotation Radians="true" X="0" Y="1.832594167" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="-192.9674804" Y="0" Z="1.744939254"/>
+      <Rotation Radians="true" X="0" Y="-0.7853975" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="-214.165839" Y="0" Z="22.9432979"/>
+      <Rotation Radians="true" X="0" Y="2.3561925" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="-168.9150463" Y="0" Z="11.34906424"/>
+      <Rotation Radians="true" X="0" Y="-0.2617991667" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="-176.6749601" Y="0" Z="40.30945671"/>
+      <Rotation Radians="true" X="0" Y="-3.403389167" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="-116.0217183" Y="0" Z="-93.04941605"/>
+      <Rotation Radians="true" X="0" Y="2.617991667" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="-101.0352129" Y="0" Z="-119.0068048"/>
+      <Rotation Radians="true" X="0" Y="-0.5235983333" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="-144.0255939" Y="0" Z="-105.1910505"/>
+      <Rotation Radians="true" X="0" Y="3.14159" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="-144.0255939" Y="0" Z="-135.1670589"/>
+      <Rotation Radians="true" X="0" Y="0" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="-170.0168529" Y="0" Z="-99.20447783"/>
+      <Rotation Radians="true" X="0" Y="-2.617991667" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="-185.0063561" Y="0" Z="-125.1670589"/>
+      <Rotation Radians="true" X="0" Y="0.5235983333" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="-185.5189533" Y="0" Z="-78.45734103"/>
+      <Rotation Radians="true" X="0" Y="-2.094393333" Z="0"/>
+    </Entity>
+    <Entity Type="Lamp" Name="-">
+      <Position X="-211.4841308" Y="0" Z="-93.44834328"/>
+      <Rotation Radians="true" X="0" Y="1.047196667" Z="0"/>
+    </Entity>
+
+    <Entity Type="LargeGarage" Name="-">
+      <Position X="-237.5" Y="0" Z="14.33012702"/>
+      <Rotation Radians="true" X="0" Y="2.094393333" Z="0"/>
+    </Entity>
+    <Entity Type="LargeGarage" Name="-">
+      <Position X="-245" Y="0" Z="-35"/>
+      <Rotation Radians="true" X="0" Y="1.570795" Z="0"/>
+    </Entity>
+    <Entity Type="LargeGarage" Name="-">
+      <Position X="-118.0500408" Y="0" Z="-139.6343391"/>
+      <Rotation Radians="true" X="0" Y="-0.2617991667" Z="0"/>
+    </Entity>
+    <Entity Type="LargeGarage" Name="-">
+      <Position X="118.4159629" Y="0" Z="35.89805231"/>
+      <Rotation Radians="true" X="0" Y="-0.7853975" Z="0"/>
+    </Entity>
+    <Entity Type="LargeGarage" Name="-">
+      <Position X="-10.93432551" Y="0" Z="264.2432901"/>
+      <Rotation Radians="true" X="0" Y="3.14159" Z="0"/>
+    </Entity>
+    <Entity Type="LargeGarage" Name="-">
+      <Position X="67.70270754" Y="0" Z="253.8905283"/>
+      <Rotation Radians="true" X="0" Y="3.665188333" Z="0"/>
+    </Entity>
+
+    <Entity Type="LargeTank" Name="-">
+      <Position X="-21.16211443" Y="0" Z="-54.58679872"/>
+      <Rotation Radians="true" X="0" Y="0" Z="0"/>
+    </Entity>
+    <Entity Type="LargeTank" Name="-">
+      <Position X="-25.99174356" Y="0" Z="-45.88089395"/>
+      <Rotation Radians="true" X="0" Y="0" Z="0"/>
+    </Entity>
+    <Entity Type="LargeTank" Name="-">
+      <Position X="54.00825644" Y="0" Z="54.11910605"/>
+      <Rotation Radians="true" X="0" Y="0" Z="0"/>
+    </Entity>
+    <Entity Type="LargeTank" Name="-">
+      <Position X="61.07932425" Y="0" Z="64.11910605"/>
+      <Rotation Radians="true" X="0" Y="0" Z="0"/>
+    </Entity>
+    <Entity Type="LargeTank" Name="-">
+      <Position X="-133.3750406" Y="0" Z="230.2891996"/>
+      <Rotation Radians="true" X="0" Y="0" Z="0"/>
+    </Entity>
+    <Entity Type="LargeTank" Name="-">
+      <Position X="-126.3039728" Y="0" Z="244.4313353"/>
+      <Rotation Radians="true" X="0" Y="0" Z="0"/>
+    </Entity>
+    <Entity Type="LargeTank" Name="-">
+      <Position X="-119.232905" Y="0" Z="237.3602674"/>
+      <Rotation Radians="true" X="0" Y="0" Z="0"/>
+    </Entity>
+
+    <Entity Type="SmallTank" Name="-">
+      <Position X="-33.50378466" Y="0" Z="-55.20903494"/>
+      <Rotation Radians="true" X="0" Y="0" Z="0"/>
+    </Entity>
+    <Entity Type="SmallTank" Name="-">
+      <Position X="65.23977187" Y="0" Z="53.76210823"/>
+      <Rotation Radians="true" X="0" Y="0" Z="0"/>
+    </Entity>
+    <Entity Type="SmallTank" Name="-">
+      <Position X="-36.00378466" Y="0" Z="-40.87890792"/>
+      <Rotation Radians="true" X="0" Y="0" Z="0"/>
+    </Entity>
+    <Entity Type="SmallTank" Name="-">
+      <Position X="-216.2184844" Y="0" Z="-108.7378918"/>
+      <Rotation Radians="true" X="0" Y="0" Z="0"/>
+    </Entity>
+    <Entity Type="SmallTank" Name="-">
+      <Position X="-225.5486114" Y="0" Z="-102.5776377"/>
+      <Rotation Radians="true" X="0" Y="0" Z="0"/>
+    </Entity>
+    <Entity Type="SmallTank" Name="-">
+      <Position X="-215.5486114" Y="0" Z="-119.8981458"/>
+      <Rotation Radians="true" X="0" Y="0" Z="0"/>
+    </Entity>
+    <Entity Type="SmallTank" Name="-">
+      <Position X="-224.8787384" Y="0" Z="-113.7378918"/>
+      <Rotation Radians="true" X="0" Y="0" Z="0"/>
+    </Entity>
+    <Entity Type="SmallTank" Name="-">
+      <Position X="158.7815156" Y="0" Z="201.2621082"/>
+      <Rotation Radians="true" X="0" Y="0" Z="0"/>
+    </Entity>
+    <Entity Type="SmallTank" Name="-">
+      <Position X="149.4513886" Y="0" Z="207.4223623"/>
+      <Rotation Radians="true" X="0" Y="0" Z="0"/>
+    </Entity>
+    <Entity Type="SmallTank" Name="-">
+      <Position X="159.4513886" Y="0" Z="190.1018542"/>
+      <Rotation Radians="true" X="0" Y="0" Z="0"/>
+    </Entity>
+    <Entity Type="SmallTank" Name="-">
+      <Position X="150.1212616" Y="0" Z="196.2621082"/>
+      <Rotation Radians="true" X="0" Y="0" Z="0"/>
+    </Entity>
+
+    <Entity Type="Tribune" Name="-">
+      <Position X="90.50605869" Y="0" Z="120.0383549"/>
+      <Rotation Radians="true" X="0" Y="0" Z="0"/>
+    </Entity>
+    <Entity Type="Tribune" Name="-">
+      <Position X="-144.4939413" Y="0" Z="75.03835487"/>
+      <Rotation Radians="true" X="0" Y="0" Z="0"/>
+    </Entity>
+    <Entity Type="Tribune" Name="-">
+      <Position X="0.5060586929" Y="0" Z="-39.96164513"/>
+      <Rotation Radians="true" X="0" Y="0" Z="0"/>
+    </Entity>
+    <Entity Type="Tribune" Name="-">
+      <Position X="-164.4939413" Y="0" Z="-64.96164513"/>
+      <Rotation Radians="true" X="0" Y="0" Z="0"/>
+    </Entity>
+    <Entity Type="Tribune" Name="-">
+      <Position X="-64.49394131" Y="0" Z="185.0383549"/>
+      <Rotation Radians="true" X="0" Y="0" Z="0"/>
+    </Entity>
+
+  </Entities>
+  <!-- End of Scene Setup -->
+
+</Level>

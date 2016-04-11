@@ -1,0 +1,190 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectName>PostProcessPoly</ProjectName>
+    <ProjectGuid>{3A68081D-E8F9-4523-9436-530DE9E5530C}</ProjectGuid>
+    <RootNamespace>PostProcessPoly</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)\Expat 2.1.0\Source\lib;Source\Common;Source\Data;Source\Math;Source\Scene;Source\Render;Source\UI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <AdditionalOptions>/IGNORE:4089 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>libexpat.lib;d3d10.lib;d3dx10d.lib;d3dx9d.lib;d3dxof.lib;dxguid.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Program Files (x86)\Expat 2.1.0\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ProgramDatabaseFile>$(OutDir)PostProcessPoly.pdb</ProgramDatabaseFile>
+      <SubSystem>Windows</SubSystem>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+      <TargetMachine>MachineX86</TargetMachine>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy "C:\Program Files (x86)\Expat 2.1.0\bin\libexpat.dll"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <OmitFramePointers>true</OmitFramePointers>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)\Expat 2.1.0\Source\lib;Source\Common;Source\Data;Source\Math;Source\Scene;Source\Render;Source\UI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <AdditionalOptions>/IGNORE:4089 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>libexpat.lib;d3d10.lib;d3dx10.lib;d3dx9.lib;d3dxof.lib;dxguid.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Program Files (x86)\Expat 2.1.0\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy "C:\Program Files (x86)\Expat 2.1.0\bin\libexpat.dll"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\Scene\Camera.cpp" />
+    <ClCompile Include="Source\Scene\Entity.cpp" />
+    <ClCompile Include="Source\Scene\EntityManager.cpp" />
+    <ClCompile Include="Source\Scene\Light.cpp" />
+    <ClCompile Include="Source\Scene\Messenger.cpp" />
+    <ClCompile Include="Source\Scene\PlanetEntity.cpp" />
+    <ClCompile Include="Source\Common\CFatalException.cpp" />
+    <ClCompile Include="Source\Common\CHashTable.cpp" />
+    <ClCompile Include="Source\Common\CTimer.cpp" />
+    <ClCompile Include="Source\Common\MSDefines.cpp" />
+    <ClCompile Include="Source\Common\Utility.cpp" />
+    <ClCompile Include="Source\Render\Mesh.cpp" />
+    <ClCompile Include="Source\Render\RenderMethod.cpp" />
+    <ClCompile Include="Source\Render\CImportXFile.cpp" />
+    <ClCompile Include="Source\UI\Input.cpp" />
+    <ClCompile Include="Source\Math\BaseMath.cpp" />
+    <ClCompile Include="Source\Math\CMatrix2x2.cpp" />
+    <ClCompile Include="Source\Math\CMatrix3x3.cpp" />
+    <ClCompile Include="Source\Math\CMatrix4x4.cpp" />
+    <ClCompile Include="Source\Math\CQuaternion.cpp" />
+    <ClCompile Include="Source\Math\CQuatTransform.cpp" />
+    <ClCompile Include="Source\Math\CVector2.cpp" />
+    <ClCompile Include="Source\Math\CVector3.cpp" />
+    <ClCompile Include="Source\Math\CVector4.cpp" />
+    <ClCompile Include="Source\Math\MathIO.cpp" />
+    <ClCompile Include="Source\Data\CParseLevel.cpp" />
+    <ClCompile Include="Source\Data\CParseXML.cpp" />
+    <ClCompile Include="Source\MainApp.cpp" />
+    <ClCompile Include="Source\PostProcessPoly.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\Scene\Camera.h" />
+    <ClInclude Include="Source\Scene\Entity.h" />
+    <ClInclude Include="Source\Scene\EntityManager.h" />
+    <ClInclude Include="Source\Scene\Light.h" />
+    <ClInclude Include="Source\Scene\Messenger.h" />
+    <ClInclude Include="Source\Scene\PlanetEntity.h" />
+    <ClInclude Include="Source\Common\CFatalException.h" />
+    <ClInclude Include="Source\Common\CHashTable.h" />
+    <ClInclude Include="Source\Common\CTimer.h" />
+    <ClInclude Include="Source\Common\Defines.h" />
+    <ClInclude Include="Source\Common\Error.h" />
+    <ClInclude Include="Source\Common\MSDefines.h" />
+    <ClInclude Include="Source\Common\Utility.h" />
+    <ClInclude Include="Source\Render\Colour.h" />
+    <ClInclude Include="Source\Render\Mesh.h" />
+    <ClInclude Include="Source\Render\RenderMethod.h" />
+    <ClInclude Include="Source\Render\CImportXFile.h" />
+    <ClInclude Include="Source\Render\MeshData.h" />
+    <ClInclude Include="Source\UI\Input.h" />
+    <ClInclude Include="Source\Math\BaseMath.h" />
+    <ClInclude Include="Source\Math\CMatrix2x2.h" />
+    <ClInclude Include="Source\Math\CMatrix3x3.h" />
+    <ClInclude Include="Source\Math\CMatrix4x4.h" />
+    <ClInclude Include="Source\Math\CQuaternion.h" />
+    <ClInclude Include="Source\Math\CQuatTransform.h" />
+    <ClInclude Include="Source\Math\CVector2.h" />
+    <ClInclude Include="Source\Math\CVector3.h" />
+    <ClInclude Include="Source\Math\CVector4.h" />
+    <ClInclude Include="Source\Math\MathDX.h" />
+    <ClInclude Include="Source\Math\MathIO.h" />
+    <ClInclude Include="Source\Data\CParseLevel.h" />
+    <ClInclude Include="Source\Data\CParseXML.h" />
+    <ClInclude Include="Source\PostProcessPoly.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Source\Render\PostProcess.fx" />
+    <None Include="Entities.xml" />
+    <None Include="Source\Render\Scene.fx" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
