@@ -38,7 +38,7 @@ namespace gen
 	// Enumeration of different post-processes
 	enum PostProcesses
 	{
-		Copy, Tint, Shockwave, GaussianBlur, DepthOfField, DepthOnly, Bloom, Hdr,
+		Copy, Tint, Shockwave, GaussianBlur, Bloom, BloomMerge, DepthOfField, DepthOnly, Hdr,
 		NumPostProcesses
 	};
 
@@ -50,10 +50,9 @@ namespace gen
 		{ Tint, false },
 		{ Shockwave, false },
 		{ GaussianBlur, false },
+		{ Bloom, true },
 		{ DepthOfField, false },
-		{ DepthOnly, false },
-		{ Bloom, false },
-		{ Hdr, true }
+		{ Hdr, false }
 	};
 
 	// Currently used post process
@@ -72,7 +71,7 @@ namespace gen
 	ID3D10Effect* PPEffect;
 
 	// Technique name for each post-process
-	const string PPTechniqueNames[NumPostProcesses] = { "PPCopy", "PPTint", "PPShockwave", "PPGaussian", "PPDepthOfField", "DepthOnly", "PPBloom", "PPHDR" };
+	const string PPTechniqueNames[NumPostProcesses] = { "PPCopy", "PPTint", "PPShockwave", "PPGaussian","PPBloom", "PPBloomMerge", "PPDepthOfField", "DepthOnly", "PPHDR" };
 
 	// Technique pointers for each post-process
 	ID3D10EffectTechnique* PPTechniques[NumPostProcesses];
@@ -232,7 +231,6 @@ namespace gen
 		return true;
 	}
 
-
 	// Release everything in the scene
 	void SceneShutdown()
 	{
@@ -295,6 +293,10 @@ namespace gen
 		srDesc.Texture2D.MostDetailedMip = 0;
 		srDesc.Texture2D.MipLevels = 1;
 		if (FAILED(g_pd3dDevice->CreateShaderResourceView(SceneTexture, &srDesc, &SceneShaderResource))) return false;
+		////////////////////// Added ////////////
+		// for the extra two renderTargetViews
+		if (FAILED(g_pd3dDevice->CreateShaderResourceView(Texture_1, &srDesc, &Texture_1_ShaderResourceView))) return false;
+		if (FAILED(g_pd3dDevice->CreateShaderResourceView(Texture_2, &srDesc, &Texture_2_ShaderResourceView))) return false;
 
 		// Load post-processing support textures
 		if (FAILED(D3DX10CreateShaderResourceViewFromFile(g_pd3dDevice, (MediaFolder + "Noise.png").c_str(), NULL, NULL, &NoiseMap, NULL))) return false;
@@ -425,13 +427,6 @@ namespace gen
 		D3D10_TECHNIQUE_DESC techniqueDesc;
 		activeTechnique->GetDesc(&techniqueDesc);
 
-		//Pass the blur radius
-		UpdateGaussianDist(BlurStrength, BlurRadius);
-
-		BlurStrengthVar->SetFloat(5.0f);
-		mdxBlurRadius->SetRawValue(&BlurRadius, 0, 4);
-		mdxBlurWeights->SetRawValue(&mBlurWeights, 0, MAX_BLUR_RADIUS * 4);
-
 		activeTechnique = PPTechniques[GaussianBlur];
 		activeTechnique->GetDesc(&techniqueDesc);
 
@@ -484,30 +479,51 @@ namespace gen
 			activeTechnique->GetPassByIndex(i)->Apply(0);
 		}
 	}
-
+	void DrawIndexed(ID3D10EffectTechnique* tech ,int index)
+	{
+		g_pd3dDevice->IASetInputLayout(nullptr);
+		g_pd3dDevice->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+		tech->GetPassByIndex(index)->Apply(0);
+		g_pd3dDevice->Draw(4, 0);
+	}
 	void RenderBloom()
 	{
-		// Get the copy texture
-		auto activeTechnique = PPTechniques[Copy];
+		auto activeTechnique = PPTechniques[Bloom];
 
 		D3D10_TECHNIQUE_DESC techniqueDesc;
 		activeTechnique->GetDesc(&techniqueDesc);
 
-		//Pass the blur radius
-		activeTechnique = PPTechniques[Bloom];
-		activeTechnique->GetDesc(&techniqueDesc);
+		// 1- apply a bright-pass filter to keep high luminance values to renderTarget_1
+		g_pd3dDevice->OMSetRenderTargets(1, &RenderTarget_1, DepthStencilView);
+		// g_pd3dDevice->OMSetRenderTargets(1, &BackBufferRenderTarget, DepthStencilView);
+		BloomTextureVar->SetResource(SceneShaderResource);
+		DrawIndexed(activeTechnique, 0);
+		
+		// 2- apply Gaussian Blur
+		// g_pd3dDevice->OMSetRenderTargets(1, &BackBufferRenderTarget, DepthStencilView);
+		// Horizontal
+		g_pd3dDevice->OMSetRenderTargets(1, &RenderTarget_2, DepthStencilView);
+		BloomTextureVar->SetResource(Texture_1_ShaderResourceView);
+		DrawIndexed(activeTechnique, 1);
+		// Vertical 
+		// g_pd3dDevice->OMSetRenderTargets(1, &BackBufferRenderTarget, DepthStencilView);
+		g_pd3dDevice->OMSetRenderTargets(1, &RenderTarget_1, DepthStencilView);
+		BloomTextureVar->SetResource(Texture_2_ShaderResourceView);
+		DrawIndexed(activeTechnique, 2);
 
-		for (unsigned int i = 0; i < techniqueDesc.Passes; ++i)
-		{
-			g_pd3dDevice->OMSetRenderTargets(1, &BackBufferRenderTarget, DepthStencilView);
-			SceneTextureVar->SetResource(SceneShaderResource);
-
-			g_pd3dDevice->IASetInputLayout(NULL);
-			g_pd3dDevice->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-			activeTechnique->GetPassByIndex(i)->Apply(0);
-			g_pd3dDevice->Draw(4, 0);
-		}
-
+		g_pd3dDevice->OMSetRenderTargets(1, &BackBufferRenderTarget, DepthStencilView);
+		BloomTextureVar->SetResource(Texture_1_ShaderResourceView);
+		SceneTextureVar->SetResource(SceneShaderResource);
+		DrawIndexed(activeTechnique, 3);
+		return;
+		g_pd3dDevice->OMSetRenderTargets(1, &BackBufferRenderTarget, DepthStencilView);
+		BloomTextureVar->SetResource(Texture_1_ShaderResourceView);
+		SceneTextureVar->SetResource(SceneShaderResource);
+		DrawIndexed(PPTechniques[BloomMerge], 0);
+		
+		g_pd3dDevice->OMSetRenderTargets(1, &BackBufferRenderTarget, DepthStencilView);
+		SceneTextureVar->SetResource(Texture_1_ShaderResourceView);
+		DrawIndexed(PPTechniques[Copy], 0);
 	}
 	void RenderHdr() {
 		// Get the copy texture
@@ -536,48 +552,6 @@ namespace gen
 		auto activeTechnique = PPTechniques[Copy];
 		if (PostProcessStates[DepthOfField])
 		{
-			// Clear the texture and the depth buffer
-			// g_pd3dDevice->ClearRenderTargetView(SceneRenderTarget, &AmbientColour.r);
-			// g_pd3dDevice->ClearDepthStencilView(DepthStencilView, D3D10_CLEAR_DEPTH, 1.0f, 0);
-
-			// TODO currently here
-			// calculate depth texture
-			g_pd3dDevice->OMSetRenderTargets(1, &RenderTarget_1, DepthStencilView);
-			DepthOfFieldTextureVar->SetResource(Texture_1_ShaderResourceView);
-			g_pd3dDevice->IASetInputLayout(NULL);
-			g_pd3dDevice->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-			PPTechniques[DepthOnly]->GetPassByIndex(0)->Apply(0);
-			g_pd3dDevice->Draw(4, 0);
-
-			// These two lines unbind the scene texture from the shader to stop DirectX issuing a warning when we try to render to it again next frame
-			// DepthOfFieldTextureVar->SetResource(0);
-			// activeTechnique->GetPassByIndex(0)->Apply(0);
-
-
-			D3D10_TECHNIQUE_DESC desc;
-			PPTechniques[GaussianBlur]->GetDesc(&desc);
-
-			// Clear the texture and the depth buffer
-			// g_pd3dDevice->ClearRenderTargetView(SceneRenderTarget, &AmbientColour.r);
-			// g_pd3dDevice->ClearDepthStencilView(DepthStencilView, D3D10_CLEAR_DEPTH, 1.0f, 0);
-
-			for (unsigned int i = 0; i < desc.Passes; ++i)
-			{
-				g_pd3dDevice->OMSetRenderTargets(1, &RenderTarget_2, DepthStencilView);
-				BloomTextureVar->SetResource(Texture_2_ShaderResourceView);
-
-				// Select technique to match currently selected post-process
-				g_pd3dDevice->IASetInputLayout(NULL);
-				g_pd3dDevice->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-				PPTechniques[GaussianBlur]->GetPassByIndex(i)->Apply(0);
-				g_pd3dDevice->Draw(4, 0);
-			}
-
-			// These two lines unbind the scene texture from the shader to stop DirectX issuing a warning when we try to render to it again next frame
-			// BloomTextureVar->SetResource(0);
-			// activeTechnique->GetPassByIndex(0)->Apply(0);
-			// activeTechnique->GetPassByIndex(1)->Apply(0);
-
 			activeTechnique = PPTechniques[DepthOfField];
 		}
 	}
@@ -657,6 +631,18 @@ namespace gen
 		else if (PostProcessStates[GaussianBlur]) {
 			activeTechnique = PPTechniques[GaussianBlur];
 		}
+		else if (PostProcessStates[DepthOfField])
+		{
+			return RenderDepthOfField();
+		}
+		else if (PostProcessStates[Bloom])
+		{
+			return RenderBloom();
+		}
+		else if (PostProcessStates[Hdr])
+		{
+			return RenderHdr();
+		}
 
 		D3D10_TECHNIQUE_DESC techniqueDesc;
 		activeTechnique->GetDesc(&techniqueDesc);
@@ -666,14 +652,14 @@ namespace gen
 			g_pd3dDevice->OMSetRenderTargets(1, &BackBufferRenderTarget, DepthStencilView);
 			SceneTextureVar->SetResource(SceneShaderResource);
 
-			g_pd3dDevice->IASetInputLayout(NULL);
+			g_pd3dDevice->IASetInputLayout(nullptr);
 			g_pd3dDevice->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 			activeTechnique->GetPassByIndex(i)->Apply(0);
 			g_pd3dDevice->Draw(4, 0);
 		}
 
 		// These two lines unbind the scene texture from the shader to stop DirectX issuing a warning when we try to render to it again next frame
-		SceneTextureVar->SetResource(0);
+		SceneTextureVar->SetResource(nullptr);
 		for (unsigned int i = 0; i < techniqueDesc.Passes; ++i)
 		{
 			activeTechnique->GetPassByIndex(i)->Apply(0);
@@ -728,8 +714,6 @@ namespace gen
 		// FULL SCREEN POST PROCESS RENDER PASS - Render full screen quad on the back-buffer mapped with the scene texture, with post-processing
 
 		RenderPost();
-
-		
 
 		//------------------------------------------------
 
@@ -795,7 +779,7 @@ namespace gen
 
 		// Output post-process name
 		outText << "Fullscreen Post-Process: ";
-		
+
 		if (PostProcessStates[Tint]) {
 			outText << "Tint ";
 		}
