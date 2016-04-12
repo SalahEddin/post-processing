@@ -19,6 +19,7 @@ DepthStencilState DepthWritesOff // Don't write to the depth buffer - polygons r
 };
 DepthStencilState DepthWritesOn // Write to the depth buffer - normal behaviour 
 {
+    DepthEnable = TRUE;
     DepthWriteMask = ALL;
 };
 DepthStencilState DisableDepth // Disable depth buffer entirely
@@ -48,7 +49,7 @@ Texture2D SceneTexture; // Texture containing the scene to copy to the full scre
 Texture2D PostProcessMap; // Second map for special purpose textures used during post-processing
 Texture2D DepthOfFieldTexture;
 Texture2D BloomTexture;
-
+Texture2D LumTexture;
 // Samplers to use with the above texture maps. Specifies texture filtering and addressing mode to use when accessing texture pixels
 // Use point sampling for the scene texture (i.e. no bilinear/trilinear blending) since don't want to blur it in the copy process
 SamplerState PointSample
@@ -242,7 +243,6 @@ float4 PPBlurShaderH(PS_POSTPROCESS_INPUT ppIn) : SV_Target
     return float4(ppCol, 0.1f);
 }
 
-
 /////////////////////////////////////////////////////////////////////
 // VERTICAL BLUR SHADER
 float4 PPBlurShaderV(PS_POSTPROCESS_INPUT ppIn) : SV_Target
@@ -306,10 +306,11 @@ struct VS_BASIC_OUTPUT
     float2 UV : TEXCOORD0;
 };
 
-float4 PixelDepth(VS_BASIC_OUTPUT vOut) : SV_Target
+float4 PixelDepth(PS_POSTPROCESS_INPUT ppIn) : SV_Target
 {
-	// Output the value that would go in the depth puffer to the pixel colour (greyscale)
-    return vOut.ProjPos.z / vOut.ProjPos.w;
+	// Output the value that would go in the depth buffer to the pixel colour (greyscale)
+    float zVal = ppIn.ProjPos.z/ ppIn.ProjPos.w;
+    return zVal.xxxx;
 }
 
 // Depth of Field Post Process - Objects in the distance are blurred and the ones
@@ -345,6 +346,19 @@ float4 PPDepthOfFieldShader(PS_POSTPROCESS_INPUT ppIn) : SV_Target
 // Depth of field technique the whole image - vertically
 technique10 PPDepthOfField
 {
+// Rendering a depth map. Only outputs the depth of each pixel
+    pass P0
+    {
+        SetVertexShader(CompileShader(vs_4_0, FullScreenQuad()));
+        SetGeometryShader(NULL);
+        SetPixelShader(CompileShader(ps_4_0, PixelDepth()));
+
+		// Switch off blending states
+        SetBlendState(NoBlending, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
+        SetRasterizerState(CullNone);
+        SetDepthStencilState(DepthWritesOn, 0);
+    }
+// blending the depth with blurriness
     pass P1
     {
         SetVertexShader(CompileShader(vs_4_0, FullScreenQuad()));
@@ -357,21 +371,6 @@ technique10 PPDepthOfField
     }
 }
 
-// Rendering a depth map. Only outputs the depth of each pixel
-technique10 DepthOnly
-{
-    pass P0
-    {
-        SetVertexShader(CompileShader(vs_4_0, FullScreenQuad()));
-        SetGeometryShader(NULL);
-        SetPixelShader(CompileShader(ps_4_0, PixelDepth()));
-
-		// Switch off blending states
-        SetBlendState(NoBlending, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
-        SetRasterizerState(CullNone);
-        SetDepthStencilState(DepthWritesOn, 0);
-    }
-}
 
 ////////////////////////
 // Bloom
@@ -379,7 +378,7 @@ technique10 DepthOnly
 
 float4 PPBright(PS_POSTPROCESS_INPUT ppIn) : SV_Target
 {
-    const float lum_threshold = 0.6f;
+    const float lum_threshold = 0.55f;
     float3 ppColour = BloomTexture.Sample(PointSample, ppIn.UV);
 
 	// Luminance calculation
@@ -393,7 +392,6 @@ float4 PPBright(PS_POSTPROCESS_INPUT ppIn) : SV_Target
         return float4(0.0f, 0.0f, 0.0f, 1.0f);
     }
 }
-
 ///////////////
 // HORIZONTAL BLOOM SHADER
 float4 PPBloomShaderH(PS_POSTPROCESS_INPUT ppIn) : SV_Target
@@ -414,7 +412,6 @@ float4 PPBloomShaderH(PS_POSTPROCESS_INPUT ppIn) : SV_Target
     ppCol /= weightTotal;
     return float4(ppCol, 1.0f);
 }
-
 ///////////////
 // VERTICAL BLOOM SHADER
 float4 PPBloomShaderV(PS_POSTPROCESS_INPUT ppIn) : SV_Target
@@ -435,7 +432,6 @@ float4 PPBloomShaderV(PS_POSTPROCESS_INPUT ppIn) : SV_Target
     ppCol /= weightTotal;
     return float4(ppCol, 1.0f);
 }
-
 
 float4 PPBloomBlend(PS_POSTPROCESS_INPUT ppIn) : SV_Target
 {
@@ -502,12 +498,6 @@ float4 PPHDRShader(PS_POSTPROCESS_INPUT ppIn) : SV_Target
     float luminance = dot(ppColour.rgb, float3(0.299f, 0.587f, 0.114f));
 }
 
-//float4 PPHDRShader(PS_POSTPROCESS_INPUT ppIn) : SV_Target
-//{
-//	float3 ppColour = SceneTexture.Sample(PointSample, ppIn.UV);
-//	return float4(ppColour, 1.0f);
-//}
-
 
 // Depth of field technique the whole image - vertically
 technique10 PPHDR
@@ -523,20 +513,21 @@ technique10 PPHDR
         SetDepthStencilState(DisableDepth, 0);
     }
 }
-/*
+
+//////////////////
+// Lumiance
 
 
-technique10 PPCombineBloom
+technique10 PPLumiance
 {
-pass P0
-{
-SetVertexShader(CompileShader(vs_4_0, PPQuad()));
-SetGeometryShader(NULL);
-SetPixelShader(CompileShader(ps_4_0, PPCombineBloomShader()));
+    pass P0
+    {
+        SetVertexShader(CompileShader(vs_4_0, FullScreenQuad()));
+        SetGeometryShader(NULL);
+        SetPixelShader(CompileShader(ps_4_0, PPHDRShader()));
 
-SetBlendState(NoBlending, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
-SetRasterizerState(CullNone);
-SetDepthStencilState(DisableDepth, 0);
+        SetBlendState(NoBlending, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
+        SetRasterizerState(CullNone);
+        SetDepthStencilState(DisableDepth, 0);
+    }
 }
-}
-*/

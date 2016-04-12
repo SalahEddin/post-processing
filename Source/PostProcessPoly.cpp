@@ -33,12 +33,13 @@ namespace gen
 	// Forward declaration
 	D3DXCOLOR HslToRgb(double);
 	void UpdateGaussianDist(float, int);
+	void DrawIndexed(ID3D10EffectTechnique* tech, int index);
 	const int MAX_BLUR_RADIUS = 64;
 
 	// Enumeration of different post-processes
 	enum PostProcesses
 	{
-		Copy, Tint, Shockwave, GaussianBlur, Bloom, BloomMerge, DepthOfField, DepthOnly, Hdr,
+		Copy, Tint, Shockwave, GaussianBlur, Bloom, DepthOfField, DepthOnly, Hdr, Lumiance,
 		NumPostProcesses
 	};
 
@@ -47,12 +48,13 @@ namespace gen
 	PostProcesses CurrentPostProcess = Tint;
 	std::map<PostProcesses, bool> PostProcessStates = {
 		{ Copy, false },
-		{ Tint, false },
+		{ Tint, true },
 		{ Shockwave, false },
 		{ GaussianBlur, false },
-		{ Bloom, true },
+		{ Bloom, false },
 		{ DepthOfField, false },
-		{ Hdr, false }
+		{ Hdr, false },
+		{ Lumiance, false }
 	};
 
 	// Currently used post process
@@ -71,7 +73,7 @@ namespace gen
 	ID3D10Effect* PPEffect;
 
 	// Technique name for each post-process
-	const string PPTechniqueNames[NumPostProcesses] = { "PPCopy", "PPTint", "PPShockwave", "PPGaussian","PPBloom", "PPBloomMerge", "PPDepthOfField", "DepthOnly", "PPHDR" };
+	const string PPTechniqueNames[NumPostProcesses] = { "PPCopy", "PPTint", "PPShockwave", "PPGaussian","PPBloom", "PPDepthOfField", "DepthOnly", "PPHDR", "PPLumiance" };
 
 	// Technique pointers for each post-process
 	ID3D10EffectTechnique* PPTechniques[NumPostProcesses];
@@ -79,44 +81,49 @@ namespace gen
 
 	// Will render the scene to a texture in a first pass, then copy that texture to the back buffer in a second post-processing pass
 	// So need a texture and two "views": a render target view (to render into the texture - 1st pass) and a shader resource view (use the rendered texture as a normal texture - 2nd pass)
-	ID3D10Texture2D*          SceneTexture = NULL;
-	ID3D10RenderTargetView*   SceneRenderTarget = NULL;
-	ID3D10ShaderResourceView* SceneShaderResource = NULL;
+	ID3D10Texture2D*          SceneTexture = nullptr;
+	ID3D10RenderTargetView*   SceneRenderTarget = nullptr;
+	ID3D10ShaderResourceView* SceneShaderResource = nullptr;
 	////////////////////// Added ////////////
-	ID3D10Texture2D* Texture_1, *Texture_2;
-	ID3D10RenderTargetView* RenderTarget_1, *RenderTarget_2;
-	ID3D10ShaderResourceView* Texture_1_ShaderResourceView, *Texture_2_ShaderResourceView;
+	ID3D10Texture2D* Texture_1 = nullptr, *Texture_2 = nullptr;
+	ID3D10RenderTargetView* RenderTarget_1 = nullptr, *RenderTarget_2 = nullptr;
+	ID3D10ShaderResourceView* Texture_1_ShaderResourceView = nullptr, *Texture_2_ShaderResourceView = nullptr;
+
+	ID3D10Texture2D*          LumTexture = nullptr;
+	ID3D10RenderTargetView*   LumRenderTarget = nullptr;
+	ID3D10ShaderResourceView* LumShaderResource = nullptr;
 
 	// Additional textures used by post-processes
-	ID3D10ShaderResourceView* NoiseMap = NULL;
-	ID3D10ShaderResourceView* BurnMap = NULL;
-	ID3D10ShaderResourceView* DistortMap = NULL;
+	ID3D10ShaderResourceView* NoiseMap = nullptr;
+	ID3D10ShaderResourceView* BurnMap = nullptr;
+	ID3D10ShaderResourceView* DistortMap = nullptr;
 
 	// Variables to link C++ post-process textures to HLSL shader variables (for area / full-screen post-processing)
-	ID3D10EffectShaderResourceVariable* SceneTextureVar = NULL;
-	ID3D10EffectShaderResourceVariable* PostProcessMapVar = NULL; // Single shader variable used for the three maps above (noise, burn, distort). Only one is needed at a time
+	ID3D10EffectShaderResourceVariable* SceneTextureVar = nullptr;
+	ID3D10EffectShaderResourceVariable* PostProcessMapVar = nullptr; // Single shader variable used for the three maps above (noise, burn, distort). Only one is needed at a time
 	////////////////////// Added ////////////
 	// extra post processing map
-	ID3D10EffectShaderResourceVariable* DepthOfFieldTextureVar = NULL;
-	ID3D10EffectShaderResourceVariable* BloomTextureVar = NULL;
+	ID3D10EffectShaderResourceVariable* DepthOfFieldTextureVar = nullptr;
+	ID3D10EffectShaderResourceVariable* BloomTextureVar = nullptr;
+	ID3D10EffectShaderResourceVariable* LumTextureVar = nullptr;
 
 	// Variables specifying the area used for post-processing
-	ID3D10EffectVectorVariable* PPAreaTopLeftVar = NULL;
-	ID3D10EffectVectorVariable* PPAreaBottomRightVar = NULL;
-	ID3D10EffectScalarVariable* PPAreaDepthVar = NULL;
+	ID3D10EffectVectorVariable* PPAreaTopLeftVar = nullptr;
+	ID3D10EffectVectorVariable* PPAreaBottomRightVar = nullptr;
+	ID3D10EffectScalarVariable* PPAreaDepthVar = nullptr;
 
 	// Other variables for individual post-processes
-	ID3D10EffectVectorVariable* TintColourVar = NULL;
-	ID3D10EffectVectorVariable* NoiseScaleVar = NULL;
-	ID3D10EffectVectorVariable* NoiseOffsetVar = NULL;
-	ID3D10EffectScalarVariable* DistortLevelVar = NULL;
-	ID3D10EffectScalarVariable* BurnLevelVar = NULL;
-	ID3D10EffectScalarVariable* WiggleVar = NULL;
-	ID3D10EffectVectorVariable* ShockOffsetVar = NULL;
+	ID3D10EffectVectorVariable* TintColourVar = nullptr;
+	ID3D10EffectVectorVariable* NoiseScaleVar = nullptr;
+	ID3D10EffectVectorVariable* NoiseOffsetVar = nullptr;
+	ID3D10EffectScalarVariable* DistortLevelVar = nullptr;
+	ID3D10EffectScalarVariable* BurnLevelVar = nullptr;
+	ID3D10EffectScalarVariable* WiggleVar = nullptr;
+	ID3D10EffectVectorVariable* ShockOffsetVar = nullptr;
 
 	////////////////////// Added ////////////
 	//Blur Variables
-	ID3D10EffectScalarVariable* BlurStrengthVar = NULL;
+	ID3D10EffectScalarVariable* BlurStrengthVar = nullptr;
 	ID3D10EffectVariable* mdxBlurRadius;
 	ID3D10EffectVariable* mdxBlurWeights;
 
@@ -140,8 +147,6 @@ namespace gen
 
 	// Amount of time to pass before calculating new average update time
 	const float UpdateTimePeriod = 0.25f;
-
-
 
 	//-----------------------------------------------------------------------------
 	// Global system variables
@@ -169,7 +174,6 @@ namespace gen
 	// Messenger class for sending messages to and between entities
 	extern CMessenger Messenger;
 
-
 	//-----------------------------------------------------------------------------
 	// Global game/scene variables
 	//-----------------------------------------------------------------------------
@@ -191,7 +195,7 @@ namespace gen
 
 	////////////////////// Added ////////////
 	double TintHsl = 200.0;
-	bool toFirstRenderTarget = true;
+	bool renderingToFirst = true;
 
 	//-----------------------------------------------------------------------------
 	// Game Constants
@@ -251,7 +255,6 @@ namespace gen
 		EntityManager.DestroyAllTemplates();
 	}
 
-
 	//*****************************************************************************
 	// Post Processing Setup
 	//*****************************************************************************
@@ -277,7 +280,7 @@ namespace gen
 		// create textures for the extra two
 		if (FAILED(g_pd3dDevice->CreateTexture2D(&textureDesc, NULL, &Texture_1))) return false;
 		if (FAILED(g_pd3dDevice->CreateTexture2D(&textureDesc, NULL, &Texture_2))) return false;
-
+		if (FAILED(g_pd3dDevice->CreateTexture2D(&textureDesc, NULL, &LumTexture))) return false;
 
 		// Get a "view" of the texture as a render target - giving us an interface for rendering to the texture
 		if (FAILED(g_pd3dDevice->CreateRenderTargetView(SceneTexture, NULL, &SceneRenderTarget))) return false;
@@ -285,7 +288,7 @@ namespace gen
 		// for the extra two renderTargetViews
 		if (FAILED(g_pd3dDevice->CreateRenderTargetView(Texture_1, NULL, &RenderTarget_1))) return false;
 		if (FAILED(g_pd3dDevice->CreateRenderTargetView(Texture_2, NULL, &RenderTarget_2))) return false;
-
+		if (FAILED(g_pd3dDevice->CreateRenderTargetView(LumTexture, NULL, &LumRenderTarget))) return false;
 		// And get a shader-resource "view" - giving us an interface for passing the texture to shaders
 		D3D10_SHADER_RESOURCE_VIEW_DESC srDesc;
 		srDesc.Format = textureDesc.Format;
@@ -297,12 +300,11 @@ namespace gen
 		// for the extra two renderTargetViews
 		if (FAILED(g_pd3dDevice->CreateShaderResourceView(Texture_1, &srDesc, &Texture_1_ShaderResourceView))) return false;
 		if (FAILED(g_pd3dDevice->CreateShaderResourceView(Texture_2, &srDesc, &Texture_2_ShaderResourceView))) return false;
-
+		if (FAILED(g_pd3dDevice->CreateShaderResourceView(LumTexture, &srDesc, &LumShaderResource))) return false;
 		// Load post-processing support textures
 		if (FAILED(D3DX10CreateShaderResourceViewFromFile(g_pd3dDevice, (MediaFolder + "Noise.png").c_str(), NULL, NULL, &NoiseMap, NULL))) return false;
 		if (FAILED(D3DX10CreateShaderResourceViewFromFile(g_pd3dDevice, (MediaFolder + "Burn.png").c_str(), NULL, NULL, &BurnMap, NULL))) return false;
 		if (FAILED(D3DX10CreateShaderResourceViewFromFile(g_pd3dDevice, (MediaFolder + "Distort.png").c_str(), NULL, NULL, &DistortMap, NULL))) return false;
-
 
 		// Load and compile a separate effect file for post-processes.
 		ID3D10Blob* pErrors;
@@ -311,8 +313,8 @@ namespace gen
 		string fullFileName = ShaderFolder + "PostProcess.fx";
 		if (FAILED(D3DX10CreateEffectFromFile(fullFileName.c_str(), NULL, NULL, "fx_4_0", dwShaderFlags, 0, g_pd3dDevice, NULL, NULL, &PPEffect, &pErrors, NULL)))
 		{
-			if (pErrors != 0)  MessageBox(NULL, reinterpret_cast<char*>(pErrors->GetBufferPointer()), "Error", MB_OK); // Compiler error: display error message
-			else               MessageBox(NULL, "Error loading FX file. Ensure your FX file is in the same folder as this executable.", "Error", MB_OK);  // No error message - probably file not found
+			if (pErrors != 0)  MessageBox(nullptr, reinterpret_cast<char*>(pErrors->GetBufferPointer()), "Error", MB_OK); // Compiler error: display error message
+			else               MessageBox(nullptr, "Error loading FX file. Ensure your FX file is in the same folder as this executable.", "Error", MB_OK);  // No error message - probably file not found
 			return false;
 		}
 
@@ -328,7 +330,7 @@ namespace gen
 
 		DepthOfFieldTextureVar = PPEffect->GetVariableByName("DepthOfFieldTexture")->AsShaderResource();
 		BloomTextureVar = PPEffect->GetVariableByName("BloomTexture")->AsShaderResource();
-
+		LumTextureVar = PPEffect->GetVariableByName("LumTexture")->AsShaderResource();
 
 		PPAreaTopLeftVar = PPEffect->GetVariableByName("PPAreaTopLeft")->AsVector();
 		PPAreaBottomRightVar = PPEffect->GetVariableByName("PPAreaBottomRight")->AsVector();
@@ -422,13 +424,15 @@ namespace gen
 	void RenderDepthOfField()
 	{
 		// Get the copy texture
-		auto activeTechnique = PPTechniques[Copy];
+		auto activeTechnique = PPTechniques[DepthOfField];
 
 		D3D10_TECHNIQUE_DESC techniqueDesc;
 		activeTechnique->GetDesc(&techniqueDesc);
 
-		activeTechnique = PPTechniques[GaussianBlur];
-		activeTechnique->GetDesc(&techniqueDesc);
+		g_pd3dDevice->OMSetRenderTargets(1, &BackBufferRenderTarget, DepthStencilView);
+		SceneTextureVar->SetResource(SceneShaderResource);
+		DrawIndexed(activeTechnique, 0);
+		return;
 
 		for (unsigned int i = 0; i < techniqueDesc.Passes; ++i)
 		{
@@ -479,13 +483,6 @@ namespace gen
 			activeTechnique->GetPassByIndex(i)->Apply(0);
 		}
 	}
-	void DrawIndexed(ID3D10EffectTechnique* tech ,int index)
-	{
-		g_pd3dDevice->IASetInputLayout(nullptr);
-		g_pd3dDevice->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-		tech->GetPassByIndex(index)->Apply(0);
-		g_pd3dDevice->Draw(4, 0);
-	}
 	void RenderBloom()
 	{
 		auto activeTechnique = PPTechniques[Bloom];
@@ -495,18 +492,15 @@ namespace gen
 
 		// 1- apply a bright-pass filter to keep high luminance values to renderTarget_1
 		g_pd3dDevice->OMSetRenderTargets(1, &RenderTarget_1, DepthStencilView);
-		// g_pd3dDevice->OMSetRenderTargets(1, &BackBufferRenderTarget, DepthStencilView);
 		BloomTextureVar->SetResource(SceneShaderResource);
 		DrawIndexed(activeTechnique, 0);
-		
+
 		// 2- apply Gaussian Blur
-		// g_pd3dDevice->OMSetRenderTargets(1, &BackBufferRenderTarget, DepthStencilView);
 		// Horizontal
 		g_pd3dDevice->OMSetRenderTargets(1, &RenderTarget_2, DepthStencilView);
 		BloomTextureVar->SetResource(Texture_1_ShaderResourceView);
 		DrawIndexed(activeTechnique, 1);
 		// Vertical 
-		// g_pd3dDevice->OMSetRenderTargets(1, &BackBufferRenderTarget, DepthStencilView);
 		g_pd3dDevice->OMSetRenderTargets(1, &RenderTarget_1, DepthStencilView);
 		BloomTextureVar->SetResource(Texture_2_ShaderResourceView);
 		DrawIndexed(activeTechnique, 2);
@@ -515,45 +509,83 @@ namespace gen
 		BloomTextureVar->SetResource(Texture_1_ShaderResourceView);
 		SceneTextureVar->SetResource(SceneShaderResource);
 		DrawIndexed(activeTechnique, 3);
-		return;
-		g_pd3dDevice->OMSetRenderTargets(1, &BackBufferRenderTarget, DepthStencilView);
-		BloomTextureVar->SetResource(Texture_1_ShaderResourceView);
-		SceneTextureVar->SetResource(SceneShaderResource);
-		DrawIndexed(PPTechniques[BloomMerge], 0);
-		
-		g_pd3dDevice->OMSetRenderTargets(1, &BackBufferRenderTarget, DepthStencilView);
-		SceneTextureVar->SetResource(Texture_1_ShaderResourceView);
-		DrawIndexed(PPTechniques[Copy], 0);
 	}
+
+	// responsible for making the texture size smaller
+	bool LumianceSetup(TUInt32 w, TUInt32 h)
+	{
+		D3D10_TEXTURE2D_DESC textureDesc;
+		textureDesc.Width = w / 2;  // Match views to viewport size
+		textureDesc.Height = h / 2;
+		textureDesc.MipLevels = 1; // No mip-maps when rendering to textures (or we will have to render every level)
+		textureDesc.ArraySize = 1;
+		textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // RGBA texture (8-bits each)
+		textureDesc.SampleDesc.Count = 1;
+		textureDesc.SampleDesc.Quality = 0;
+		textureDesc.Usage = D3D10_USAGE_DEFAULT;
+		textureDesc.BindFlags = D3D10_BIND_RENDER_TARGET | D3D10_BIND_SHADER_RESOURCE; // Indicate we will use texture as render target, and pass it to shaders
+		textureDesc.CPUAccessFlags = 0;
+		textureDesc.MiscFlags = 0;
+
+		if (FAILED(g_pd3dDevice->CreateTexture2D(&textureDesc, NULL, &LumTexture))) return false;
+
+		// Get a "view" of the texture as a render target - giving us an interface for rendering to the texture
+		if (FAILED(g_pd3dDevice->CreateRenderTargetView(LumTexture, NULL, &LumRenderTarget))) return false;
+
+		// And get a shader-resource "view" - giving us an interface for passing the texture to shaders
+		D3D10_SHADER_RESOURCE_VIEW_DESC srDesc;
+		srDesc.Format = textureDesc.Format;
+		srDesc.ViewDimension = D3D10_SRV_DIMENSION_TEXTURE2D;
+		srDesc.Texture2D.MostDetailedMip = 0;
+		srDesc.Texture2D.MipLevels = 1;
+		if (FAILED(g_pd3dDevice->CreateShaderResourceView(LumTexture, &srDesc, &LumShaderResource))) return false;
+
+		return true;
+	}
+
 	void RenderHdr() {
-		// Get the copy texture
-		auto activeTechnique = PPTechniques[Hdr];
+
+		g_pd3dDevice->OMSetRenderTargets(1, &LumRenderTarget, DepthStencilView);
+		SceneTextureVar->SetResource(SceneShaderResource);
+		DrawIndexed(PPTechniques[Copy], 0);
+
+		// 1- downsample the lumiance texture until it's 1x1
+		auto w = BackBufferWidth, h = BackBufferHeight;
+		LumianceSetup(w, h);
+
+		// 2- get bright pass filter & Bloom
+		auto activeTechnique = PPTechniques[Bloom];
 
 		D3D10_TECHNIQUE_DESC techniqueDesc;
 		activeTechnique->GetDesc(&techniqueDesc);
 
+		// 1- apply a bright-pass filter to keep high luminance values to renderTarget_1
+		g_pd3dDevice->OMSetRenderTargets(1, &RenderTarget_1, DepthStencilView);
+		BloomTextureVar->SetResource(SceneShaderResource);
+		DrawIndexed(activeTechnique, 0);
+
+		// 2- apply Gaussian Blur
+		// Horizontal
+		g_pd3dDevice->OMSetRenderTargets(1, &RenderTarget_2, DepthStencilView);
+		BloomTextureVar->SetResource(Texture_1_ShaderResourceView);
+		DrawIndexed(activeTechnique, 1);
+		// Vertical 
+		g_pd3dDevice->OMSetRenderTargets(1, &RenderTarget_1, DepthStencilView);
+		BloomTextureVar->SetResource(Texture_2_ShaderResourceView);
+		DrawIndexed(activeTechnique, 2);
+
+		g_pd3dDevice->OMSetRenderTargets(1, &BackBufferRenderTarget, DepthStencilView);
+		BloomTextureVar->SetResource(Texture_1_ShaderResourceView);
+		SceneTextureVar->SetResource(SceneShaderResource);
+		DrawIndexed(activeTechnique, 3);
+
+		// 3- Merge and tone map
 		activeTechnique = PPTechniques[Hdr];
-		activeTechnique->GetDesc(&techniqueDesc);
 
-		for (unsigned int i = 0; i < techniqueDesc.Passes; ++i)
-		{
-			g_pd3dDevice->OMSetRenderTargets(1, &BackBufferRenderTarget, DepthStencilView);
-			SceneTextureVar->SetResource(SceneShaderResource);
-
-			g_pd3dDevice->IASetInputLayout(NULL);
-			g_pd3dDevice->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-			activeTechnique->GetPassByIndex(i)->Apply(0);
-			g_pd3dDevice->Draw(4, 0);
-		}
-	}
-
-	void RenderPostProcess()
-	{
-		auto activeTechnique = PPTechniques[Copy];
-		if (PostProcessStates[DepthOfField])
-		{
-			activeTechnique = PPTechniques[DepthOfField];
-		}
+		g_pd3dDevice->OMSetRenderTargets(1, &BackBufferRenderTarget, DepthStencilView);
+		BloomTextureVar->SetResource(SceneShaderResource);
+		LumTextureVar->SetResource(LumShaderResource);
+		DrawIndexed(activeTechnique, 3);
 	}
 
 	// Sets in the shaders the top-left, bottom-right and depth coordinates of the area post process to work on
@@ -616,20 +648,61 @@ namespace gen
 		PPAreaDepthVar->SetFloat(0.0f); // Full screen depth set at 0 - in front of everything
 	}
 
+	void CopyFromScene()
+	{
+		g_pd3dDevice->OMSetRenderTargets(1, &RenderTarget_1, DepthStencilView);
+		SceneTextureVar->SetResource(SceneShaderResource);
+		DrawIndexed(PPTechniques[Copy], 0);
+
+		renderingToFirst = false;
+	}
+	void CopyToBackBuffer()
+	{
+		auto res = (renderingToFirst) ? Texture_2_ShaderResourceView : Texture_1_ShaderResourceView;
+
+		g_pd3dDevice->OMSetRenderTargets(1, &BackBufferRenderTarget, DepthStencilView);
+		SceneTextureVar->SetResource(res);
+		DrawIndexed(PPTechniques[Copy], 0);
+
+	}
+	// used for filters that requires one renderTarget
+	void RenderGenericPP(ID3D10EffectTechnique *filter)
+	{
+		D3D10_TECHNIQUE_DESC techniqueDesc;
+		filter->GetDesc(&techniqueDesc);
+
+		for (unsigned int i = 0; i < techniqueDesc.Passes; ++i)
+		{
+			g_pd3dDevice->OMSetRenderTargets(1, &BackBufferRenderTarget, DepthStencilView);
+			SceneTextureVar->SetResource(SceneShaderResource);
+			/*
+			if (renderingToFirst) {
+				g_pd3dDevice->OMSetRenderTargets(1, &RenderTarget_1, DepthStencilView);
+				SceneTextureVar->SetResource(Texture_2_ShaderResourceView);
+			}
+			else
+			{
+				g_pd3dDevice->OMSetRenderTargets(1, &RenderTarget_2, DepthStencilView);
+				SceneTextureVar->SetResource(Texture_1_ShaderResourceView);
+			}*/
+			DrawIndexed(filter, i);
+		}
+
+	}
 	void RenderPost() {
 		// Prepare shader settings for the current full screen filter
 		SetFullScreenPostProcessArea(); // Define the full-screen as the area to affect
 
-		auto activeTechnique = PPTechniques[Copy];
+		//CopyFromScene();
 
 		if (PostProcessStates[Tint]) {
-			activeTechnique = PPTechniques[Tint];
+			RenderGenericPP(PPTechniques[Tint]);
 		}
 		else if (PostProcessStates[Shockwave]) {
-			activeTechnique = PPTechniques[Shockwave];
+			RenderGenericPP(PPTechniques[Shockwave]);
 		}
 		else if (PostProcessStates[GaussianBlur]) {
-			activeTechnique = PPTechniques[GaussianBlur];
+			RenderGenericPP(PPTechniques[GaussianBlur]);
 		}
 		else if (PostProcessStates[DepthOfField])
 		{
@@ -643,27 +716,12 @@ namespace gen
 		{
 			return RenderHdr();
 		}
-
-		D3D10_TECHNIQUE_DESC techniqueDesc;
-		activeTechnique->GetDesc(&techniqueDesc);
-
-		for (unsigned int i = 0; i < techniqueDesc.Passes; ++i)
+		else
 		{
-			g_pd3dDevice->OMSetRenderTargets(1, &BackBufferRenderTarget, DepthStencilView);
-			SceneTextureVar->SetResource(SceneShaderResource);
-
-			g_pd3dDevice->IASetInputLayout(nullptr);
-			g_pd3dDevice->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-			activeTechnique->GetPassByIndex(i)->Apply(0);
-			g_pd3dDevice->Draw(4, 0);
+			return RenderGenericPP(PPTechniques[Copy]);
 		}
 
-		// These two lines unbind the scene texture from the shader to stop DirectX issuing a warning when we try to render to it again next frame
-		SceneTextureVar->SetResource(nullptr);
-		for (unsigned int i = 0; i < techniqueDesc.Passes; ++i)
-		{
-			activeTechnique->GetPassByIndex(i)->Apply(0);
-		}
+		//CopyToBackBuffer();
 	}
 
 	//-----------------------------------------------------------------------------
@@ -910,5 +968,12 @@ namespace gen
 			//mBlurWeights[i] /= (2 * sigma * sigma);
 		}
 
+	}
+	void DrawIndexed(ID3D10EffectTechnique* tech, int index)
+	{
+		g_pd3dDevice->IASetInputLayout(nullptr);
+		g_pd3dDevice->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+		tech->GetPassByIndex(index)->Apply(0);
+		g_pd3dDevice->Draw(4, 0);
 	}
 } // namespace gen
