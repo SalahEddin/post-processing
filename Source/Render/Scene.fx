@@ -705,15 +705,49 @@ float4 PPTintShader( VS_BASIC_OUTPUT vOut ) : SV_Target
 	// this screen coordinate (0->width, 0->height) into a UV coordinate (0->1, 0->1) is divide by the viewport width and height. Those values are 
 	// available as variables at the top of this file.
 	//
-	//***TODO - Create a float2 called UVScene that contains the UV coordinates of this pixel (simple, following the comment above).
-
-	//***TODO - Sample the texture colour at the location UVSCene and multiply it by DiffuseColour (the colour of the material extracted from the .X file, variable already set up)
-
-	//***TODO - Return a float4 containing the tinted colour in rgb and 1.0 in alpha
-
 	float2 UVScene = float2(vOut.ProjPos.x / ViewportWidth, vOut.ProjPos.y / ViewportHeight);
 	float3 Colour = SceneTexture.Sample(PointClamp, UVScene) * DiffuseColour;
 	return float4(Colour, 1.0f);
+}
+
+
+float4 PPGreyscaleShader(VS_BASIC_OUTPUT vOut) : SV_Target
+{
+	// This shader plots post-processed pixels, here just tinting the scene. As this is a post-process, the scene is already rendered in a texture.
+	// We need UV coordinates to access the scene texture and get the pixel in the location that this shader is to tint. The (standard) vertex shader
+	// that has occured before this pixel shader output coordinates in projection space, and under DirectX10 and above these coordinates are available
+	// to the pixel shader. However,  by this stage they are converted into screen space, which is convenient: the variable vOut.ProjPos is just a screen
+	// pixel coordinate, e.g. (224, 120). In fact strictly, it has 0.5 added (224.5,120.5), but that does not concern us here. All we need do to convert
+	// this screen coordinate (0->width, 0->height) into a UV coordinate (0->1, 0->1) is divide by the viewport width and height. Those values are 
+	// available as variables at the top of this file.
+	//
+    float2 UVScene = float2(vOut.ProjPos.x / ViewportWidth, vOut.ProjPos.y / ViewportHeight);
+    float3 Colour = SceneTexture.Sample(PointClamp, UVScene);
+    // averages the value of RGB
+    float greyCol = (Colour.r + Colour.g + Colour.b) / 3;
+
+    return float4(greyCol, greyCol, greyCol, 1.0f);
+}
+
+float4 PPNegativeShader(VS_BASIC_OUTPUT vOut) : SV_Target
+{
+    float2 UVScene = float2(vOut.ProjPos.x / ViewportWidth, vOut.ProjPos.y / ViewportHeight);
+    float3 Colour = SceneTexture.Sample(PointClamp, UVScene);
+
+    return float4(1.0f - Colour.r, 1.0f - Colour.g, 1.0f - Colour.b, 1.0f);
+}
+
+float4 PPHighContrastShader(VS_BASIC_OUTPUT vOut) : SV_Target
+{
+    float2 UVScene = float2(vOut.ProjPos.x / ViewportWidth, vOut.ProjPos.y / ViewportHeight);
+    float3 Colour = SceneTexture.Sample(PointClamp, UVScene);
+
+    float Lum = dot(Colour.rgb, float3(0.299f, 0.587f, 0.114f));
+    if (Lum < 0.3f)
+    {
+        return float4(0.0f, 0.0f, 0.0f, 1.0f);
+    }
+    return float4(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 
@@ -798,8 +832,7 @@ float4 PPCutGlassShader( VS_NORMALMAP_OUTPUT vOut ) : SV_Target
 	// Get scene texture colour (with distortion) to blend with the cut glass texture
 
 	//***TODO - Fill in the float2 UVScene with the UV coordinates of this pixel (same as start part of Tint code you filled in above)
-	float2 sceneUV = 0; // Not 0, fill in the correct values
-	//...
+    float2 sceneUV = float2(vOut.ProjPos.x / ViewportWidth, vOut.ProjPos.y / ViewportHeight); 
 
 	// Offset UVs in scene texture to emulate refraction. Transform surface normal (from normal mapping) into camera space,
 	// and use this as a direction to offset UV calculated above. This is just a simple effect - not correct refraction
@@ -865,4 +898,46 @@ technique10 PPCutGlassPoly
      }
 }
 
+// Polygon post-processing - greyscale effect
+technique10 PPGreyscalePoly
+{
+    pass P0
+    {
+        SetVertexShader(CompileShader(vs_4_0, VSNormalMap()));
+        SetGeometryShader(NULL);
+        SetPixelShader(CompileShader(ps_4_0, PPGreyscaleShader()));
+
+        SetBlendState(NoBlending, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
+        SetRasterizerState(CullBack);
+        SetDepthStencilState(DepthWritesOff, 0);
+    }
+}
+
+technique10 PPNegativePoly
+{
+    pass P0
+    {
+        SetVertexShader(CompileShader(vs_4_0, VSNormalMap()));
+        SetGeometryShader(NULL);
+        SetPixelShader(CompileShader(ps_4_0, PPNegativeShader()));
+
+        SetBlendState(NoBlending, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
+        SetRasterizerState(CullBack);
+        SetDepthStencilState(DepthWritesOff, 0);
+    }
+}
+
+technique10 PPContrastPoly
+{
+    pass P0
+    {
+        SetVertexShader(CompileShader(vs_4_0, VSNormalMap()));
+        SetGeometryShader(NULL);
+        SetPixelShader(CompileShader(ps_4_0, PPHighContrastShader()));
+
+        SetBlendState(NoBlending, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
+        SetRasterizerState(CullBack);
+        SetDepthStencilState(DepthWritesOff, 0);
+    }
+}
 //**************************************************************************************

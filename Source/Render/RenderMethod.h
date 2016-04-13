@@ -27,18 +27,21 @@ namespace gen
 
 // Customisable list of render methods available for use in materials and implemented in
 // RenderMethod.cpp/.h. This list can be changed to to support new rendering methods
-enum ERenderMethod
-{
-	PlainColour        = 0,
-	PlainTexture       = 1,
-	PixelLit           = 2,
-	PixelLitTex        = 3,
-	NormalMap          = 4,
-	ParallaxMap        = 5,
-	PPTint             = 6, // A post-processed material
-	PPCutGlass         = 7, // A post-processed material
-	NumRenderMethods  // Leave this entry at end
-};
+	enum ERenderMethod
+	{
+		PlainColour	= 0,
+		PlainTexture= 1,
+		PixelLit	= 2,
+		PixelLitTex = 3,
+		NormalMap	= 4,
+		ParallaxMap = 5,
+		PPTint		= 6, // A post-processed material
+		PPCutGlass	= 7, // A post-processed material
+		PPGreyscale = 8, // A post-processed material
+		PPNegative	= 9, // A post-processed material
+		PPContrast	= 10, // A post-processed material
+		NumRenderMethods  // Leave this entry at end
+	};
 
 
 // Pointer to a function to initialise a render method - typically sets shader constants

@@ -28,7 +28,9 @@
     <EntityTemplate Type="Object" Name="ParaCube" Mesh="Cube.x"/>
     <EntityTemplate Type="Object" Name="BigShip" Mesh="Interstellar.x"/>
     <EntityTemplate Type="Object" Name="Block" Mesh="Block.x"/>
-
+    <EntityTemplate Type="Object" Name="BlockContrast" Mesh="BlockContrast.x"/>
+    <EntityTemplate Type="Object" Name="BlockGrey" Mesh="BlockGrey.x"/>
+    <EntityTemplate Type="Object" Name="BlockNeg" Mesh="BlockNeg.x"/>
   </Templates>
   <!-- End of Entity Types -->
 
@@ -64,19 +66,26 @@
       <Scale X="40.0" Y="40.0" Z="40.0"/>
     </Entity>
     <Entity Type="Block" Name="PostProcessBlock">
-      <Position X="0.0" Y="42.0" Z="-80.0"/>
-      <Scale X="0.3" Y="0.4" Z="0.2"/>
+      <Position X="-28" Y="55.0" Z="-80.0"/>
+      <Scale X="1.5" Y="1.5" Z="0.2"/>
     </Entity>
-
+    <Entity Type="BlockGrey" Name="PostProcessBlock">
+      <Position X="-10.0" Y="55.0" Z="-80.0"/>
+      <Scale X="1.5" Y="1.5" Z="0.2"/>
+    </Entity>
+    <Entity Type="BlockNeg" Name="PostProcessBlock">
+      <Position X="9.5" Y="55.0" Z="-80.0"/>
+      <Scale X="1.5" Y="1.5" Z="0.2"/>
+    </Entity>
+    <Entity Type="BlockContrast" Name="PostProcessBlock">
+      <Position X="28.0" Y="55.0" Z="-80.0"/>
+      <Scale X="1.5" Y="1.5" Z="0.2"/>
+    </Entity>
+    
     <!-- Scenery Positions -->
-    <!-- TODO CHANGE NAMES!-->
-    <Entity Type="Wall" Name="Wall-ey">
-      <Position X="0" Y="40" Z="-80"/>
-      <Scale X="10.0" Y="10.0" Z="10.0"/>
-    </Entity>
     <Entity Type="Wall2" Name="Wall-is">
-      <Position X="0" Y="50" Z="-80"/>
-      <Scale X="10.0" Y="10.0" Z="10.0"/>
+      <Position X="0" Y="40" Z="-80"/>
+      <Scale X="60.0" Y="60.0" Z="60.0"/>
     </Entity>
     
     <Entity Type="Lamp" Name="-">

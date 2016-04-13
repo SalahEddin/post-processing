@@ -99,7 +99,10 @@ SRenderMethod RenderMethods[NumRenderMethods] =
 	"NormalMapping",   RM_NormalMapping,        2,         true,       false,          0,                // NormalMap       
 	"ParallaxMapping", RM_ParallaxMapping,      2,         true,       false,          0,                // ParallaxMap       
 	"PPTintPoly",      RM_TransformColour,      0,         false,      true,           0,                // PPTint       
-	// TODO add more for wallz 
+	"PPCutGlassPoly",  RM_TransformColour,      0,         false,      true,           0,                // PPCutGlass
+	"PPGreyscalePoly", RM_TransformColour,      0,         false,      true,           0,                // PPGreyscale       
+	"PPNegativePoly",  RM_TransformColour,      0,         false,      true,           0,                // PPNegative
+	"PPContrastPoly",  RM_TransformColour,      0,         false,      true,           0,                // PPNegative
 };
 
 
@@ -142,6 +145,18 @@ ERenderMethod RenderMethodFromMaterial
 		else if (materialName.find("CutGlass") == 0)
 		{
 			return PPCutGlass;
+		}
+		else if (materialName.find("Greyscale") == 0)
+		{
+			return PPGreyscale;
+		}
+		else if (materialName.find("Negative") == 0)
+		{
+			return PPNegative;
+		}
+		else if (materialName.find("Contrast") == 0)
+		{
+			return PPContrast;
 		}
 		else
 		{

@@ -23,16 +23,16 @@ namespace gen
 //--------------------------------------------------------------------------------------
 
 // The main D3D interface, this pointer is used to access most D3D functions (and is shared across all cpp files through Defines.h)
-ID3D10Device* g_pd3dDevice = NULL;
+ID3D10Device* g_pd3dDevice = nullptr;
 
 // Variables used to setup D3D
-IDXGISwapChain*         SwapChain = NULL;
-ID3D10Texture2D*        DepthStencil = NULL;
-ID3D10DepthStencilView* DepthStencilView = NULL;
-ID3D10RenderTargetView* BackBufferRenderTarget = NULL;
+IDXGISwapChain*         SwapChain = nullptr;
+ID3D10Texture2D*        DepthStencil = nullptr;
+ID3D10DepthStencilView* DepthStencilView = nullptr;
+ID3D10RenderTargetView* BackBufferRenderTarget = nullptr;
 
 // D3DX font for OSD
-ID3DX10Font* OSDFont = NULL;
+ID3DX10Font* OSDFont = nullptr;
 
 
 //--------------------------------------------------------------------------------------
