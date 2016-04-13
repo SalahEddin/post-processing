@@ -28,13 +28,20 @@ namespace gen
 	//*****************************************************************************
 	// Post-process data
 	//*****************************************************************************
+	
+	// Variable Blur strength
+	int		BlurRadius = 11;
+	float	BlurStrength = 15.0f;
+	float	BlurMean = 0.5f;
+	const int MAX_BLUR_RADIUS = 64;
+	float mBlurWeights[MAX_BLUR_RADIUS];
 
 	////////////////////// Added ////////////
 	// Forward declaration
 	D3DXCOLOR HslToRgb(double);
 	void UpdateGaussianDist(float, int);
 	void DrawIndexed(ID3D10EffectTechnique* tech, int index);
-	const int MAX_BLUR_RADIUS = 64;
+	
 
 	// Enumeration of different post-processes
 	enum PostProcesses
@@ -126,13 +133,7 @@ namespace gen
 	ID3D10EffectScalarVariable* BlurStrengthVar = nullptr;
 	ID3D10EffectVariable* mdxBlurRadius;
 	ID3D10EffectVariable* mdxBlurWeights;
-
-	bool mbGaussian = false;
-	int BlurRadius = 11;
-	float BlurStrength = 15.0f;
-	float BlurMean = 0.5f;
-	float mBlurWeights[MAX_BLUR_RADIUS];
-
+	
 
 	//*****************************************************************************
 
